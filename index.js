@@ -5,8 +5,8 @@ const app = express();
 const config = require('./config/config-port');
 require('./config/express-config')(app);
 
-app.listen(config.PORT, () => console.log(`Server is running on port ${config.PORT}...`));
+const router = require('./routes.js');
 
-app.get('/', (req, res) => {
-    res.render('home', { layout: false });
-});
+app.use(router);
+
+app.listen(config.PORT, () => console.log(`Server is running on port ${config.PORT}...`));
