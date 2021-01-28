@@ -20,7 +20,9 @@ router.route('/create')
     });
 
 router.get('/details/:id', (req, res) => {
-    res.render('details', { title: 'Details' });
+    const id = req.params.id;
+
+    res.render('details', { title: 'Details', cube: cubeService.getOne(id) });
 });
 
 module.exports = router;
