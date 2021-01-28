@@ -1,3 +1,4 @@
+const { urlencoded } = require('express');
 const express = require('express');
 const handlebars = require('express-handlebars');
 
@@ -9,6 +10,10 @@ function expressConfig(app) {
     app.set('view engine', 'hbs');
     
     app.use(express.static('public'));
+
+    app.use(urlencoded({
+        extended: true
+    }));
 }
 
 module.exports = expressConfig;
