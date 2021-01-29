@@ -6,7 +6,7 @@ const { Router } = express;
 const router = Router();
 
 router.get('/', (req, res) => {
-    res.render('home', { title: 'Home', cubes: cubeService.getAll() });
+    res.render('home', { title: 'Home', cubes: cubeService.getAll(req.query) });
 });
 
 router.route('/create')
@@ -14,9 +14,12 @@ router.route('/create')
         res.render('create', { title: 'Create' });
     })
     .post((req, res) => {
-        cubeService.create(req.body);
-
-        res.redirect('/');
+        cubeService.create(req.body, (err) => {
+            if (err) {
+                res.send(500).end();
+            }
+            res.redirect('/');
+        })
     });
 
 router.get('/details/:id', (req, res) => {
