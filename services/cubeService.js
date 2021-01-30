@@ -1,7 +1,7 @@
 const cubes = require('../config/database.json');
 const Cube = require('../models/Cube');
 const uniqid = require('uniqid');
-const fs = require('fs');
+const cubeData = require('../data/cubeData');
 
 function getAll(query) {
     let result = cubes;
@@ -22,7 +22,7 @@ function getAll(query) {
 }
 
 function getOne(id) {
-    return cubes.find(c => c.id === id);
+    return cubeData.getOne(id);
 }
 
 function create(data, callback) {
@@ -34,9 +34,7 @@ function create(data, callback) {
         data.difficultyLevel,
     );
 
-    cubes.push(cube);
-
-    fs.writeFile('./config/database.json', JSON.stringify(cubes), callback);
+    cubeData.create(cube, callback);
 }
 
 module.exports = {
