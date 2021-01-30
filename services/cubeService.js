@@ -1,9 +1,9 @@
 const Cube = require('../models/Cube');
 const uniqid = require('uniqid');
-const cubeData = require('../data/cubeData');
+// const cubeData = require('../data/cubeData');
 
 function getAll(query) {
-    let result = cubeData.getAll();
+    let result = Cube.getAll();
 
     if (query.search) {
         result = result.filter(x => x.name.toLowerCase().includes(query.search));
@@ -21,7 +21,7 @@ function getAll(query) {
 }
 
 function getOne(id) {
-    return cubeData.getOne(id);
+    return Cube.getOne(id);
 }
 
 function create(data, callback) {
@@ -33,7 +33,7 @@ function create(data, callback) {
         data.difficultyLevel,
     );
 
-    cubeData.create(cube, callback);
+    cube.create(callback);
 }
 
 module.exports = {
