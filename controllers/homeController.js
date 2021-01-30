@@ -6,7 +6,11 @@ const { Router } = express;
 const router = Router();
 
 router.get('/', (req, res) => {
-    res.render('home', { title: 'Home', cubes: cubeService.getAll(req.query) });
+    cubeService.getAll(req.query)
+        .then(cubes => {
+            res.render('home', { title: 'Home', cubes });
+        })
+        .catch(err => console.log(err));
 });
 
 router.route('/create')
@@ -16,16 +20,21 @@ router.route('/create')
     .post((req, res) => {
         cubeService.create(req.body, (err) => {
             if (err) {
-                res.send(500).end();
+                res.sendStatus(500).end();
+            } else {
+                res.redirect('/');
             }
-            res.redirect('/');
         })
     });
 
 router.get('/details/:id', (req, res) => {
     const id = req.params.id;
 
-    res.render('details', { title: 'Details', cube: cubeService.getOne(id) });
+    cubeService.getOne(id)
+        .then(cube => {
+            res.render('details', { title: 'Details', cube });
+        })
+        .catch(err => console.log(err));
 });
 
 module.exports = router;

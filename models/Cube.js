@@ -1,28 +1,32 @@
-const cubes = require('../config/database.json');
-const fs = require('fs');
+const mongoose = require('mongoose');
 
-class Cube {
-    constructor(id, name, description, imageUrl, difficultyLevel) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.difficultyLevel = difficultyLevel;
-    }
+const cubeSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+        maxLength: 30,
+    },
+    imageUrl: {
+        type: String,
+        required: true,
+        match: /https?/
+    },
+    difficultyLevel: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 6,
+    },
+    accessories: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Accessory',
+    }]
+});
 
-    create(callback) {
-        cubes.push(this);
-
-        fs.writeFile('./config/database.json', JSON.stringify(cubes), callback);
-    }
-
-    static getOne(id) {
-        return cubes.find(c => c.id === id);
-    }
-
-    static getAll() {
-        return cubes;
-    }
-}
+const Cube = mongoose.model('Cube', cubeSchema);
 
 module.exports = Cube;

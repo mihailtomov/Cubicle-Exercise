@@ -1,18 +1,18 @@
-const cubes = require('../config/database.json');
-const fs = require('fs');
+// const cubes = require('../config/database.json');
+// const fs = require('fs');
 
-module.exports = {
-    create(cube, callback) {
-        cubes.push(cube);
+// module.exports = {
+//     create(cube, callback) {
+//         cubes.push(cube);
 
-        fs.writeFile('./config/database.json', JSON.stringify(cubes), callback);
-    },
+//         fs.writeFile('./config/database.json', JSON.stringify(cubes), callback);
+//     },
 
-    getOne(id) {
-        return cubes.find(c => c.id === id);
-    },
+//     getOne(id) {
+//         return cubes.find(c => c.id === id);
+//     },
 
-    getAll() {
-        return cubes;
-    }
-}
+//     getAll() {
+//         return cubes;
+//     }
+// }

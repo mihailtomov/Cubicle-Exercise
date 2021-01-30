@@ -1,39 +1,35 @@
 const Cube = require('../models/Cube');
-const uniqid = require('uniqid');
-// const cubeData = require('../data/cubeData');
 
-function getAll(query) {
-    let result = Cube.getAll();
+async function getAll(query) {
+    try {
+        let cubes = await Cube.find().lean();
 
-    if (query.search) {
-        result = result.filter(x => x.name.toLowerCase().includes(query.search));
+        if (query.search) {
+            cubes = cubes.filter(x => x.name.toLowerCase().includes(query.search));
+        }
+
+        if (query.from) {
+            cubes = cubes.filter(x => x.difficultyLevel >= Number(query.from));
+        }
+
+        if (query.to) {
+            cubes = cubes.filter(x => x.difficultyLevel <= Number(query.to));
+        }
+
+        return cubes;
+    } catch (error) {
+        console.log(error);
     }
-
-    if (query.from) {
-        result = result.filter(x => x.difficultyLevel >= Number(query.from));
-    }
-
-    if (query.to) {
-        result = result.filter(x => x.difficultyLevel <= Number(query.to));
-    }
-
-    return result;
 }
 
 function getOne(id) {
-    return Cube.getOne(id);
+    return Cube.findById(id).lean();
 }
 
 function create(data, callback) {
-    const cube = new Cube(
-        uniqid(),
-        data.name,
-        data.description,
-        data.imageUrl,
-        data.difficultyLevel,
-    );
+    const cube = new Cube(data);
 
-    cube.create(callback);
+    cube.save(callback);
 }
 
 module.exports = {
