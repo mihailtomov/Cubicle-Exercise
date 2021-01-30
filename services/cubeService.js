@@ -1,10 +1,9 @@
-const cubes = require('../config/database.json');
 const Cube = require('../models/Cube');
 const uniqid = require('uniqid');
 const cubeData = require('../data/cubeData');
 
 function getAll(query) {
-    let result = cubes;
+    let result = cubeData.getAll();
 
     if (query.search) {
         result = result.filter(x => x.name.toLowerCase().includes(query.search));

@@ -10,5 +10,9 @@ module.exports = {
 
     getOne(id) {
         return cubes.find(c => c.id === id);
+    },
+
+    getAll() {
+        return cubes;
     }
 }
