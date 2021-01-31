@@ -1,5 +1,6 @@
 const express = require('express');
 const cubeService = require('../services/cubeService');
+const accessoryService = require('../services/accessoryService');
 
 const { Router } = express;
 
@@ -32,7 +33,9 @@ router.route('/accessory/create')
         res.render('createAccessory', { title: 'Create Accessory' });
     })
     .post((req, res) => {
-
+        accessoryService.create(req.body)
+            .then(() => res.redirect('/'))
+            .catch(() => res.sendStatus(500).end());
     });
 
 router.get('/details/:id', (req, res) => {
@@ -46,7 +49,10 @@ router.get('/details/:id', (req, res) => {
 });
 
 router.get('/accessory/attach/:id', (req, res) => {
-    res.render('attachAccessory', { title: 'Attach Accessory' });
+    accessoryService.getAll()
+        .then(accessories => {
+            res.render('attachAccessory', { title: 'Attach Accessory', accessories });
+        })
 });
 
 module.exports = router;
