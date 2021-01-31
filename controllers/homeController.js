@@ -13,9 +13,9 @@ router.get('/', (req, res) => {
         .catch(err => console.log(err));
 });
 
-router.route('/create')
+router.route('/cube/create')
     .get((req, res) => {
-        res.render('create', { title: 'Create' });
+        res.render('create', { title: 'Create Cube' });
     })
     .post((req, res) => {
         cubeService.create(req.body, (err) => {
@@ -27,6 +27,14 @@ router.route('/create')
         })
     });
 
+router.route('/accessory/create')
+    .get((req, res) => {
+        res.render('createAccessory', { title: 'Create Accessory' });
+    })
+    .post((req, res) => {
+
+    });
+
 router.get('/details/:id', (req, res) => {
     const id = req.params.id;
 
@@ -35,6 +43,10 @@ router.get('/details/:id', (req, res) => {
             res.render('details', { title: 'Details', cube });
         })
         .catch(err => console.log(err));
+});
+
+router.get('/accessory/attach/:id', (req, res) => {
+    res.render('attachAccessory', { title: 'Attach Accessory' });
 });
 
 module.exports = router;
