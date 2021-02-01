@@ -48,11 +48,19 @@ router.get('/details/:id', (req, res) => {
         .catch(err => console.log(err));
 });
 
-router.get('/accessory/attach/:id', (req, res) => {
-    accessoryService.getAll()
-        .then(accessories => {
-            res.render('attachAccessory', { title: 'Attach Accessory', accessories });
-        })
-});
+router.route('/accessory/attach/:id')
+    .get((req, res) => {
+        accessoryService.getAll()
+            .then(accessories => {
+                res.render('attachAccessory', { title: 'Attach Accessory', accessories, _id: req.params.id });
+            })
+    })
+    .post((req, res) => {
+        const cubeId = req.params.id;
+        const accessoryId = req.body.accessory;
+
+        cubeService.attachAccessory(cubeId, accessoryId)
+            .then(() => res.redirect(`/accessory/attach/${cubeId}`));
+    });
 
 module.exports = router;
