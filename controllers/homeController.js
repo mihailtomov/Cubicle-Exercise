@@ -6,12 +6,10 @@ const { Router } = express;
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    cubeService.getAll(req.query)
-        .then(cubes => {
-            res.render('home', { title: 'Home', cubes });
-        })
-        .catch(err => console.log(err));
+router.get('/', async (req, res) => {
+    const cubes = await cubeService.getAll(req.query);
+
+    res.render('home', { title: 'Home', cubes });
 });
 
 router.route('/cube/create')
@@ -38,14 +36,11 @@ router.route('/accessory/create')
             .catch(() => res.sendStatus(500).end());
     });
 
-router.get('/details/:id', (req, res) => {
+router.get('/details/:id', async (req, res) => {
     const id = req.params.id;
+    const cube = await cubeService.getOneWithAccessories(id);
 
-    cubeService.getOneWithAccessories(id)
-        .then(cube => {
-            res.render('details', { title: 'Details', cube });
-        })
-        .catch(err => console.log(err));
+    res.render('details', { title: 'Details', cube });
 });
 
 router.route('/accessory/attach/:id')

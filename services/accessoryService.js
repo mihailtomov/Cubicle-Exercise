@@ -16,6 +16,6 @@ function create(data) {
 
 module.exports = {
     getAll,
-    create,
     getAllUnattached,
+    create,
 }
