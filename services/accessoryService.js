@@ -4,6 +4,10 @@ function getAll() {
     return Accessory.find().lean();
 }
 
+function getAllUnattached(ids) {
+    return Accessory.find({ _id: { $nin: ids } }).lean();
+}
+
 function create(data) {
     const accessory = new Accessory(data);
 
@@ -13,4 +17,5 @@ function create(data) {
 module.exports = {
     getAll,
     create,
+    getAllUnattached,
 }

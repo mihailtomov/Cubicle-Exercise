@@ -49,16 +49,13 @@ router.get('/details/:id', (req, res) => {
 });
 
 router.route('/accessory/attach/:id')
-    .get((req, res) => {
+    .get(async (req, res) => {
         const cubeId = req.params.id;
 
-        accessoryService.getAll()
-            .then(accessories => {
-                cubeService.getOne(cubeId)
-                    .then(cube => {
-                        res.render('attachAccessory', { title: 'Attach Accessory', accessories, cube });
-                    })
-            })
+        const cube = await cubeService.getOne(cubeId);
+        const accessories = await accessoryService.getAllUnattached(cube.accessories);
+
+        res.render('attachAccessory', { title: 'Attach Accessory', accessories, cube });
     })
     .post((req, res) => {
         const cubeId = req.params.id;
