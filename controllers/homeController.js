@@ -50,9 +50,14 @@ router.get('/details/:id', (req, res) => {
 
 router.route('/accessory/attach/:id')
     .get((req, res) => {
+        const cubeId = req.params.id;
+
         accessoryService.getAll()
             .then(accessories => {
-                res.render('attachAccessory', { title: 'Attach Accessory', accessories, _id: req.params.id });
+                cubeService.getOne(cubeId)
+                    .then(cube => {
+                        res.render('attachAccessory', { title: 'Attach Accessory', accessories, cube });
+                    })
             })
     })
     .post((req, res) => {
