@@ -41,7 +41,7 @@ router.route('/accessory/create')
 router.get('/details/:id', (req, res) => {
     const id = req.params.id;
 
-    cubeService.getOne(id)
+    cubeService.getOneWithAccessories(id)
         .then(cube => {
             res.render('details', { title: 'Details', cube });
         })
