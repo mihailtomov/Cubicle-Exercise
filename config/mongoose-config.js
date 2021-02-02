@@ -1,7 +1,8 @@
 module.exports = () => {
     const mongoose = require('mongoose');
+    const config = require('./config');
 
-    mongoose.connect('mongodb://localhost/cubicle', { useNewUrlParser: true, useUnifiedTopology: true });
+    mongoose.connect(config.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true });
 
     const db = mongoose.connection;
 

@@ -2,7 +2,7 @@ const express = require('express');
 
 const app = express();
 
-const config = require('./config/config-port');
+const config = require('./config/config');
 require('./config/express-config')(app);
 require('./config/mongoose-config')();
 
