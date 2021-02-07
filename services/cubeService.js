@@ -29,8 +29,8 @@ function getOne(id) {
 
 function getOneWithAccessories(id) {
     return Cube.findById(id)
-    .populate('accessories')
-    .lean();
+        .populate('accessories')
+        .lean();
 }
 
 function create(data, callback) {
@@ -47,10 +47,20 @@ async function attachAccessory(cubeId, accessoryId) {
     return cube.save();
 }
 
+async function update(id, data) {
+    return await Cube.findByIdAndUpdate(id, data);
+}
+
+async function deleteOne(id) {
+    return await Cube.deleteOne({ _id: id });
+}
+
 module.exports = {
     getAll,
     getOne,
     getOneWithAccessories,
     create,
+    update,
+    deleteOne,
     attachAccessory,
 }

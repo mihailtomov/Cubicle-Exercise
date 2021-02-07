@@ -1,53 +1,46 @@
 const express = require('express');
 const authService = require('../services/authService');
-const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+
+const isAuthenticated = require('../middlewares/isAuthenticated');
+const isGuest = require('../middlewares/isGuest');
 
 const { Router } = express;
 
 const router = Router();
 
-router.use(cookieParser());
-
 router.route('/register')
-    .get((req, res) => {
-        res.render('registerPage');
+    .get(isGuest, (req, res) => {
+        res.render('register');
     })
-    .post((req, res) => {
-        const { username, password, repeatPassword } = req.body;
+    .post(isGuest, async (req, res) => {
+        try {
+            await authService.register(req.body);
 
-        if (password === repeatPassword) {
-            bcrypt.hash(password, 9, async (err, hashPassword) => {
-                if (err) return console.log(err);
-
-                const user = { username, password: hashPassword };
-
-                try {
-                    await authService.create(user);
-
-                    const payload = user;
-                    const secret = 'test';
-                    const options = { expiresIn: '2d' };
-
-                    const token = jwt.sign(payload, secret, options);
-
-                    res.cookie('auth', token);
-                    res.redirect('/login');
-
-                } catch (err) {
-                    console.log(err);
-                }
-            });
+            res.redirect('/login');
+        } catch (error) {
+            res.render('registerPage', { error });
         }
-    });
+    })
 
 router.route('/login')
-    .get((req, res) => {
-        res.render('loginPage');
+    .get(isGuest, (req, res) => {
+        res.render('login');
     })
-    .post((req, res) => {
+    .post(isGuest, async (req, res) => {
+        try {
+            const token = await authService.login(req.body);
+            res.cookie('AUTH', token);
 
-    });
+            res.redirect('/');
+        } catch (error) {
+            res.render('login', { error });
+        }
+    })
+
+router.get('/logout', isAuthenticated, (req, res) => {
+    res.clearCookie('AUTH');
+
+    res.redirect('/');
+});
 
 module.exports = router;

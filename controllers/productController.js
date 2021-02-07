@@ -2,6 +2,8 @@ const express = require('express');
 const cubeService = require('../services/cubeService');
 const accessoryService = require('../services/accessoryService');
 
+const isAuthenticated = require('../middlewares/isAuthenticated');
+
 const { Router } = express;
 
 const router = Router();
@@ -13,11 +15,11 @@ router.get('/', async (req, res) => {
 });
 
 router.route('/cube/create')
-    .get((req, res) => {
+    .get(isAuthenticated, (req, res) => {
         res.render('create', { title: 'Create Cube' });
     })
-    .post((req, res) => {
-        cubeService.create(req.body, (err) => {
+    .post(isAuthenticated, (req, res) => {
+        cubeService.create({ ...req.body, creatorId: req.user._id }, (err) => {
             if (err) {
                 res.sendStatus(500).end();
             } else {
@@ -27,10 +29,10 @@ router.route('/cube/create')
     });
 
 router.route('/accessory/create')
-    .get((req, res) => {
+    .get(isAuthenticated, (req, res) => {
         res.render('createAccessory', { title: 'Create Accessory' });
     })
-    .post((req, res) => {
+    .post(isAuthenticated, (req, res) => {
         accessoryService.create(req.body)
             .then(() => res.redirect('/'))
             .catch(() => res.sendStatus(500).end());
@@ -40,11 +42,19 @@ router.get('/details/:id', async (req, res) => {
     const id = req.params.id;
     const cube = await cubeService.getOneWithAccessories(id);
 
-    res.render('details', { title: 'Details', cube });
+    let isCreator = false;
+    
+    if (req.user && cube.creatorId) {
+        if (req.user._id === cube.creatorId) {
+            isCreator = true;
+        }
+    }
+
+    res.render('details', { title: 'Details', cube, isCreator });
 });
 
 router.route('/accessory/attach/:id')
-    .get(async (req, res) => {
+    .get(isAuthenticated, async (req, res) => {
         const cubeId = req.params.id;
 
         const cube = await cubeService.getOne(cubeId);
@@ -52,7 +62,7 @@ router.route('/accessory/attach/:id')
 
         res.render('attachAccessory', { title: 'Attach Accessory', accessories, cube });
     })
-    .post((req, res) => {
+    .post(isAuthenticated, (req, res) => {
         const cubeId = req.params.id;
         const accessoryId = req.body.accessory;
 
@@ -60,4 +70,34 @@ router.route('/accessory/attach/:id')
             .then(() => res.redirect(`/accessory/attach/${cubeId}`));
     });
 
+
+router.route('/cube/edit/:id')
+    .get(isAuthenticated, async (req, res) => {
+        const id = req.params.id;
+        const cube = await cubeService.getOne(id);
+
+        res.render('editCube', { title: 'Edit Cube', cube });
+    })
+    .post(isAuthenticated, async (req, res) => {
+        const id = req.params.id;
+
+        await cubeService.update(id, req.body);
+
+        res.redirect(`/details/${id}`);
+    });
+
+router.route('/cube/delete/:id')
+    .get(isAuthenticated, async (req, res) => {
+        const id = req.params.id;
+        const cube = await cubeService.getOne(id);
+
+        res.render('deleteCube', { title: 'Delete Cube', cube });
+    })
+    .post(isAuthenticated, async (req, res) => {
+        const id = req.params.id;
+
+        await cubeService.deleteOne(id);
+
+        res.redirect('/');
+    });
 module.exports = router;
